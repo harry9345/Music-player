@@ -4,6 +4,7 @@
   height: 1000px;
   margin: auto;
 }
+
 .details {
   padding: 20px;
 }
@@ -11,8 +12,27 @@
   display: flex;
   float: left;
   padding: 5px;
-  margin: 50px;
+  margin: 10%;
 }
 .seekSlider {
-  width: 70%;
+  width: 60%;
+}
+.trackDiv {
+  border-right: 1px solid gray;
+}
+.ulList {
+  list-style: none;
+  margin-left: -6vh;
+  font-size: 14px;
+}
+.liList {
+  border: 1px solid #eee;
+}
+.addToFavP {
+  width: 20px;
+}
+.favUlList {
+  list-style: none;
+  margin-left: -6vh;
+  font-size: 11px;
 }

@@ -79,22 +79,22 @@ seekSlider.addEventListener("", seekTo);
 nextBtn.addEventListener("click", nextTrack);
 previousBtn.addEventListener("click", prevTrack);
 
-function loadTrack(trackIndex) {
+function loadTrack(index) {
   // clear pre seek timer
   clearInterval(updateTimer);
   resetValues();
 
   // load new track
-  curentTrack.src = trackList[trackIndex].path;
-  console.log("trackList[trackIndex].path");
+  curentTrack.src = trackList[index].path;
+  console.log("trackList[index].path");
   curentTrack.load();
 
   // update new detail
-  trackName.textContent = trackList[trackIndex].name;
-  artist.textContent = trackList[trackIndex].artist;
+  trackName.textContent = trackList[index].name;
+  artist.textContent = trackList[index].artist;
 
   nowPlaying.textContent =
-    "Now Playing : " + (trackIndex + 1) + " Of " + trackList.length;
+    "Now Playing : " + (index + 1) + " Of " + trackList.length;
 
   // for updating slider
   updateTimer = setInterval(seekUpdate, 1000);
@@ -189,3 +189,93 @@ function seekUpdate() {
 }
 
 loadTrack(trackIndex);
+
+//0--------- listing all the tracks
+
+let trackDiv = document.getElementById("trackDiv");
+let ulList = document.createElement("ul");
+trackDiv.appendChild(ulList);
+ulList.className = "ulList";
+
+// listing fev tracks
+let favList = document.getElementById("favList");
+let FavUlList = document.createElement("ul");
+favList.appendChild(FavUlList);
+FavUlList.className = "favUlList";
+
+let i;
+function showList() {
+  for (i = 0; i < trackList.length; i++) {
+    ulList.insertAdjacentHTML(
+      "afterbegin",
+      ` <li class="liList"> <span> ${trackList[i].name}</span> from:  <p>${trackList[i].artist}  </p>
+      <button type="button" class="btn btn-outline-primary btn-sm addToFav" onclick="addToFav(this.id)" id=${trackList[i].id}>+</button>
+      <button type="button" class="btn btn-outline-success btn-sm playMe" onclick="playMe(${trackList[i].id})">&#9658;</button>
+      </li> `
+    );
+  }
+}
+showList();
+
+let favTrack = [];
+
+function addToFav(liId) {
+  for (i = 0; i < trackList.length; i++) {
+    if (trackList[i].id == liId) {
+      let isInFav = favTrack.includes(trackList[i]);
+      if (isInFav === false) {
+        favTrack.push(trackList[i]);
+        renderFavSong();
+      }
+    }
+  }
+  setToLocalStorage(favTrack);
+}
+
+function setToLocalStorage(track) {
+  localStorage.setItem("favTrack", JSON.stringify(track));
+}
+
+// onload
+loadFavsong();
+
+function loadFavsong() {
+  if (localStorage.getItem("favTrack") !== null) {
+    fromLocalStorageTo();
+    renderFavSong();
+  }
+}
+
+function fromLocalStorageTo() {
+  favTrack = JSON.parse(localStorage.getItem("favTrack"));
+  return favTrack;
+}
+
+function renderFavSong() {
+  FavUlList.innerHTML = "";
+  for (i = 0; i < favTrack.length; i++) {
+    FavUlList.insertAdjacentHTML(
+      "afterbegin",
+      ` <li class="liList" name="favouritList" > <span> ${favTrack[i].name}</span> from:  <p>${favTrack[i].artist}  </p>
+        <button type="button" class="btn btn-outline-danger btn-sm removeFrpmFev" onclick="removeFromFav(this.id)" id=${favTrack[i].id}>-</button>
+        <button type="button" class="btn btn-outline-success btn-sm playMe" onclick="playMe(${favTrack[i].id})">&#9658;</button>
+        </li> `
+    );
+  }
+}
+
+function playMe(id) {
+  loadTrack(id - 1);
+}
+
+let favouritList = document.getElementsByName("favouritList");
+function removeFromFav(id) {
+  for (i = 0; i < favTrack.length; i++) {
+    if (favTrack[i].id == id) {
+      let removeIndex = favTrack.indexOf(favTrack[i]);
+      favTrack.splice(removeIndex, 1);
+      setToLocalStorage(favTrack);
+      renderFavSong();
+    }
+  }
+}
